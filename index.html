@@ -10,40 +10,36 @@
     <div class="container">
       <header>
         <h1>🤖 AI Deteksi Kesopanan Chat</h1>
-        <p>Sistem AI yang belajar mendeteksi kesopanan dari feedback Anda</p>
+        <p>Sistem AI dengan Naive Bayes yang belajar dari feedback Anda</p>
       </header>
 
-      <main>
+      <div class="main-content">
         <!-- Input Section -->
-        <section class="input-section">
+        <div class="input-section">
           <h2>📝 Masukkan Kalimat Chat</h2>
           <textarea
             id="chatInput"
             placeholder="Ketik kalimat yang ingin dianalisis..."
           ></textarea>
           <button id="analyzeBtn">Analisis Kesopanan</button>
-        </section>
+        </div>
 
         <!-- Result Section -->
-        <section
-          class="result-section"
-          id="resultSection"
-          style="display: none"
-        >
+        <div class="result-section" id="resultSection" style="display: none">
           <h3>🔍 Hasil Analisis</h3>
           <div class="prediction" id="predictionResult"></div>
           <div class="confidence" id="confidenceScore"></div>
 
-          <!-- Feedback Section -->
           <div class="feedback-section">
-            <h4>Apakah prediksi ini benar?</h4>
+            <h4>✋ Apakah prediksi ini benar?</h4>
             <div class="feedback-buttons">
-              <button id="correctBtn" class="btn-success">✅ Benar</button>
-              <button id="wrongBtn" class="btn-danger">❌ Salah</button>
+              <button id="correctBtn" class="feedback-btn correct">
+                ✅ Benar
+              </button>
+              <button id="wrongBtn" class="feedback-btn wrong">❌ Salah</button>
             </div>
           </div>
 
-          <!-- Correction Section -->
           <div
             class="correction-section"
             id="correctionSection"
@@ -51,16 +47,16 @@
           >
             <h4>🔧 Koreksi yang Benar:</h4>
             <div class="correction-buttons">
-              <button id="correctSopan" class="btn-correction">Sopan</button>
-              <button id="correctTidakSopan" class="btn-correction">
+              <button id="correctSopan" class="correction-btn">Sopan</button>
+              <button id="correctTidakSopan" class="correction-btn">
                 Tidak Sopan
               </button>
             </div>
           </div>
-        </section>
+        </div>
 
         <!-- Stats Section -->
-        <section class="stats-section">
+        <div class="stats-section">
           <h3>📊 Statistik Model</h3>
           <div class="stats-grid">
             <div class="stat-card">
@@ -80,23 +76,19 @@
               <div class="stat-label">Data Tidak Sopan</div>
             </div>
           </div>
-        </section>
+        </div>
 
         <!-- Training Data Section -->
-        <section class="training-data-section">
+        <div class="training-data-section">
           <h3>🎓 Data Training</h3>
           <div class="data-controls">
-            <button id="showDataBtn" class="btn-secondary">
-              Tampilkan Data
-            </button>
-            <button id="clearDataBtn" class="btn-danger">Reset Model</button>
-            <button id="exportDataBtn" class="btn-secondary">
-              Export Data
-            </button>
+            <button id="showDataBtn">Tampilkan Data</button>
+            <button id="clearDataBtn">Reset Model</button>
+            <button id="exportDataBtn">Export Data</button>
           </div>
           <div id="trainingDataList" style="display: none"></div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>
