@@ -1,9 +1,11 @@
+/* Reset CSS */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Body dan Layout Utama */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -12,7 +14,7 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   background: white;
   border-radius: 20px;
@@ -20,6 +22,7 @@ body {
   overflow: hidden;
 }
 
+/* Header */
 .header {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   color: white;
@@ -37,10 +40,12 @@ body {
   opacity: 0.9;
 }
 
+/* Content */
 .content {
   padding: 30px;
 }
 
+/* Input Section */
 .input-section {
   margin-bottom: 30px;
 }
@@ -85,6 +90,29 @@ body {
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
+/* Explanation Section */
+.explanation {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  border-left: 5px solid #4facfe;
+}
+
+.explanation h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.step {
+  margin: 10px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+}
+
+/* Result Section */
 .result {
   background: #f8f9fa;
   padding: 20px;
@@ -122,14 +150,16 @@ body {
   font-weight: 500;
 }
 
-.probability-details {
+.calculation-details {
   background: #e9ecef;
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
   font-size: 0.9rem;
+  font-family: "Courier New", monospace;
 }
 
+/* Feedback */
 .feedback {
   text-align: center;
 }
@@ -177,6 +207,31 @@ body {
   box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
 }
 
+/* Message */
+.message {
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 10px;
+  text-align: center;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  display: none;
+  animation: slideIn 0.3s ease;
+  font-weight: 500;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Statistics */
 .stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -209,29 +264,6 @@ body {
   color: #666;
   margin-top: 5px;
   font-size: 0.9rem;
-}
-
-.message {
-  padding: 15px;
-  margin: 15px 0;
-  border-radius: 10px;
-  text-align: center;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
-  display: none;
-  animation: slideIn 0.3s ease;
-  font-weight: 500;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 /* Responsive Design */

@@ -3,15 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Deteksi Kesopanan Chat - Naive Bayes</title>
+    <title>AI Deteksi Kesopanan - Naive Bayes Sederhana</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
+      <!-- Header -->
       <div class="header">
-        <h1>🤖 AI Deteksi Kesopanan (Naive Bayes)</h1>
-        <p>Sistem machine learning untuk menganalisis kesopanan teks</p>
+        <h1>🤖 AI Deteksi Kesopanan</h1>
+        <p>Belajar Naive Bayes dengan cara yang mudah dipahami</p>
       </div>
+
       <div class="content">
         <!-- Input Section -->
         <div class="input-section">
@@ -22,12 +24,37 @@
           ></textarea>
           <button id="analyzeBtn">Analisis dengan Naive Bayes</button>
         </div>
+
+        <!-- Explanation Section -->
+        <div class="explanation">
+          <h3>🧠 Cara Kerja Naive Bayes:</h3>
+          <div class="step">
+            <strong>1. Training:</strong> Model belajar dari data contoh (sopan
+            vs tidak sopan)
+          </div>
+          <div class="step">
+            <strong>2. Preprocessing:</strong> Membersihkan dan memecah teks
+            menjadi kata-kata
+          </div>
+          <div class="step">
+            <strong>3. Probability:</strong> Menghitung peluang setiap kata
+            untuk kategori sopan/tidak sopan
+          </div>
+          <div class="step">
+            <strong>4. Prediction:</strong> Mengalikan semua peluang untuk
+            membuat prediksi
+          </div>
+        </div>
+
         <!-- Result Section -->
         <div class="result" id="result">
           <div class="prediction" id="prediction"></div>
           <div class="confidence" id="confidence"></div>
-          <div class="probability-details" id="probabilityDetails"></div>
 
+          <!-- Detail Perhitungan -->
+          <div class="calculation-details" id="calculationDetails"></div>
+
+          <!-- Feedback -->
           <div class="feedback">
             <h4>Apakah hasil ini benar?</h4>
             <div class="feedback-buttons">
@@ -38,13 +65,15 @@
             </div>
           </div>
         </div>
+
         <!-- Message -->
         <div class="message" id="message"></div>
-        <!-- Stats -->
+
+        <!-- Statistics -->
         <div class="stats">
           <div class="stat-card">
-            <div class="stat-number" id="totalVocab">0</div>
-            <div class="stat-label">Total Vocabulary</div>
+            <div class="stat-number" id="totalWords">0</div>
+            <div class="stat-label">Total Kata</div>
           </div>
           <div class="stat-card">
             <div class="stat-number" id="accuracy">0%</div>
@@ -52,11 +81,11 @@
           </div>
           <div class="stat-card">
             <div class="stat-number" id="sopanDocs">0</div>
-            <div class="stat-label">Dokumen Sopan</div>
+            <div class="stat-label">Data Sopan</div>
           </div>
           <div class="stat-card">
             <div class="stat-number" id="tidakSopanDocs">0</div>
-            <div class="stat-label">Dokumen Tidak Sopan</div>
+            <div class="stat-label">Data Tidak Sopan</div>
           </div>
         </div>
       </div>
