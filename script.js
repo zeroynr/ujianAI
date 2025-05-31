@@ -1,420 +1,465 @@
-class NaiveBayesPolitenessDetector {
+// Enhanced Naive Bayes Classifier dengan Advanced AI Learning Techniques
+class AdvancedNaiveBayesPolitenessClassifier {
   constructor() {
-    this.trainingData = this.loadTrainingData();
+    // Training data awal dengan lebih banyak variasi
+    this.trainingDocs = {
+      sopan: [
+        "terima kasih atas bantuannya",
+        "mohon maaf mengganggu",
+        "selamat pagi semua",
+        "tolong bantu saya",
+        "permisi boleh bertanya",
+        "dengan hormat",
+        "silakan masuk",
+        "bagus sekali pekerjaannya",
+        "mohon tunggu sebentar",
+        "terima kasih banyak",
+        "saya sangat menghargai",
+        "maaf telah merepotkan",
+        "boleh minta tolong",
+        "selamat sore pak",
+        "terima kasih atas waktunya",
+      ],
+      tidakSopan: [
+        "kamu bodoh sekali",
+        "dasar goblok",
+        "jangan berisik",
+        "sialan banget",
+        "tolol ga ngerti",
+        "bangsat lo",
+        "bego amat",
+        "kampret deh",
+        "tai kucing",
+        "anjing lu",
+        "idiot banget sih",
+        "payah lu",
+        "jelek banget",
+        "menyebalkan sekali",
+        "dasar sampah",
+      ],
+    };
+
+    // Advanced features
+    this.ngramSize = 2; // Bigram support
+    this.minWordFreq = 1; // Minimum word frequency
+    this.learningRate = 0.1; // For adaptive learning
+
+    // Vocabulary dan feature counts
     this.vocabulary = new Set();
-    this.classProbs = {};
-    this.wordProbs = {};
-    this.currentPrediction = null;
+    this.ngramVocabulary = new Set();
+    this.wordCounts = { sopan: {}, tidakSopan: {} };
+    this.ngramCounts = { sopan: {}, tidakSopan: {} };
+    this.docCounts = {
+      sopan: this.trainingDocs.sopan.length,
+      tidakSopan: this.trainingDocs.tidakSopan.length,
+    };
+    this.totalWords = { sopan: 0, tidakSopan: 0 };
+    this.totalNgrams = { sopan: 0, tidakSopan: 0 };
+
+    // Advanced AI Learning features
+    this.confidenceThreshold = 0.7; // Auto-learning threshold
+    this.wordWeights = {}; // TF-IDF like weights
+    this.documentFrequency = {}; // For IDF calculation
+
+    // Learning statistics
+    this.stats = {
+      totalPredictions: 0,
+      correctPredictions: 0,
+      autoLearningCount: 0,
+      uncertainPredictions: 0,
+    };
+
+    // Current prediction context
     this.currentText = "";
-    this.correctPredictions = 0;
-    this.totalPredictions = 0;
+    this.currentPrediction = "";
+    this.currentConfidence = 0;
 
-    this.initializeModel();
-    this.initializeUI();
-    this.updateStats();
+    // Train initial model
+    this.trainModel();
   }
 
-  loadTrainingData() {
-    const defaultData = [
-      { text: "terima kasih banyak atas bantuannya", label: "sopan" },
-      { text: "tolong bantu saya mengerjakan ini", label: "sopan" },
-      { text: "maaf mengganggu waktu anda sebentar", label: "sopan" },
-      { text: "selamat pagi semoga hari anda menyenangkan", label: "sopan" },
-      { text: "mohon bantuan untuk masalah ini", label: "sopan" },
-      { text: "silakan duduk dan ambil menu", label: "sopan" },
-      { text: "permisi saya mau lewat", label: "sopan" },
-      { text: "bagus sekali pekerjaannya", label: "sopan" },
-      { text: "kamu bodoh sekali sih", label: "tidak sopan" },
-      { text: "dasar goblok ga bisa apa apa", label: "tidak sopan" },
-      { text: "pergi sana tolol jangan ganggu", label: "tidak sopan" },
-      { text: "bangsat lu berisik banget", label: "tidak sopan" },
-      { text: "tai kucing lebih berguna dari lu", label: "tidak sopan" },
-      { text: "sialan kenapa lama banget", label: "tidak sopan" },
-      { text: "bego amat ga ngerti ngerti", label: "tidak sopan" },
-      { text: "kampret bikin kesel aja", label: "tidak sopan" },
-    ];
-
-    const saved = localStorage.getItem("politenessTrainingData");
-    return saved ? JSON.parse(saved) : defaultData;
-  }
-
-  saveTrainingData() {
-    localStorage.setItem(
-      "politenessTrainingData",
-      JSON.stringify(this.trainingData)
-    );
-  }
-
-  // Preprocessing text
+  // Advanced text preprocessing dengan multiple techniques
   preprocessText(text) {
-    return text
+    // Basic cleaning
+    let cleaned = text
       .toLowerCase()
       .replace(/[^\w\s]/g, " ")
       .replace(/\s+/g, " ")
-      .trim()
-      .split(" ")
-      .filter((word) => word.length > 0);
+      .trim();
+
+    // Tokenization
+    let words = cleaned.split(" ").filter((word) => word.length > 2);
+
+    // Simple stemming (hapus akhiran umum)
+    words = words.map((word) => {
+      // Indonesian stemming rules (simplified)
+      if (word.endsWith("nya")) return word.slice(0, -3);
+      if (word.endsWith("kan")) return word.slice(0, -3);
+      if (word.endsWith("an")) return word.slice(0, -2);
+      return word;
+    });
+
+    return words;
   }
 
-  // Build vocabulary from training data
-  buildVocabulary() {
+  // Generate n-grams for better context understanding
+  generateNgrams(words, n = 2) {
+    const ngrams = [];
+    for (let i = 0; i <= words.length - n; i++) {
+      ngrams.push(words.slice(i, i + n).join("_"));
+    }
+    return ngrams;
+  }
+
+  // Calculate TF-IDF weights
+  calculateTFIDF(word, category) {
+    const tf =
+      (this.wordCounts[category][word] || 0) / this.totalWords[category];
+    const totalDocs = this.docCounts.sopan + this.docCounts.tidakSopan;
+    const df = this.documentFrequency[word] || 0;
+    const idf = Math.log(totalDocs / (1 + df));
+    return tf * idf;
+  }
+
+  // Enhanced training dengan multiple feature types
+  trainModel() {
+    // Reset all counts
     this.vocabulary.clear();
-    this.trainingData.forEach((item) => {
-      const words = this.preprocessText(item.text);
-      words.forEach((word) => this.vocabulary.add(word));
-    });
+    this.ngramVocabulary.clear();
+    this.wordCounts = { sopan: {}, tidakSopan: {} };
+    this.ngramCounts = { sopan: {}, tidakSopan: {} };
+    this.totalWords = { sopan: 0, tidakSopan: 0 };
+    this.totalNgrams = { sopan: 0, tidakSopan: 0 };
+    this.documentFrequency = {};
+
+    // Process each category
+    for (let category of ["sopan", "tidakSopan"]) {
+      for (let doc of this.trainingDocs[category]) {
+        const words = this.preprocessText(doc);
+        const ngrams = this.generateNgrams(words, this.ngramSize);
+
+        // Track document frequency for IDF
+        const uniqueWords = new Set(words);
+        for (let word of uniqueWords) {
+          this.documentFrequency[word] =
+            (this.documentFrequency[word] || 0) + 1;
+        }
+
+        // Count unigrams
+        for (let word of words) {
+          this.vocabulary.add(word);
+          this.wordCounts[category][word] =
+            (this.wordCounts[category][word] || 0) + 1;
+          this.totalWords[category]++;
+        }
+
+        // Count n-grams
+        for (let ngram of ngrams) {
+          this.ngramVocabulary.add(ngram);
+          this.ngramCounts[category][ngram] =
+            (this.ngramCounts[category][ngram] || 0) + 1;
+          this.totalNgrams[category]++;
+        }
+      }
+    }
+
+    // Calculate word weights using TF-IDF
+    this.calculateWordWeights();
   }
 
-  // Calculate class probabilities P(class)
-  calculateClassProbabilities() {
-    const totalDocs = this.trainingData.length;
-    const classCounts = {};
+  // Calculate importance weights for words
+  calculateWordWeights() {
+    this.wordWeights = {};
+    for (let word of this.vocabulary) {
+      const tfidfSopan = this.calculateTFIDF(word, "sopan");
+      const tfidfTidakSopan = this.calculateTFIDF(word, "tidakSopan");
 
-    this.trainingData.forEach((item) => {
-      classCounts[item.label] = (classCounts[item.label] || 0) + 1;
-    });
-
-    for (const className in classCounts) {
-      this.classProbs[className] = classCounts[className] / totalDocs;
+      // Higher weight for words that are distinctive
+      this.wordWeights[word] = Math.abs(tfidfSopan - tfidfTidakSopan) + 1;
     }
   }
 
-  // Calculate word probabilities P(word|class) with Laplace smoothing
-  calculateWordProbabilities() {
-    const classes = ["sopan", "tidak sopan"];
-    const classWordCounts = {};
-    const classTotalWords = {};
-
-    // Initialize counters
-    classes.forEach((className) => {
-      classWordCounts[className] = {};
-      classTotalWords[className] = 0;
-    });
-
-    // Count words per class
-    this.trainingData.forEach((item) => {
-      const words = this.preprocessText(item.text);
-      const className = item.label;
-
-      words.forEach((word) => {
-        classWordCounts[className][word] =
-          (classWordCounts[className][word] || 0) + 1;
-        classTotalWords[className]++;
-      });
-    });
-
-    // Calculate probabilities with Laplace smoothing
+  // Hitung P(word|class) dengan Laplace smoothing
+  getWordProbability(word, category) {
+    const wordCount = this.wordCounts[category][word] || 0;
+    const totalWords = this.totalWords[category];
     const vocabularySize = this.vocabulary.size;
 
-    classes.forEach((className) => {
-      this.wordProbs[className] = {};
-
-      this.vocabulary.forEach((word) => {
-        const wordCount = classWordCounts[className][word] || 0;
-        // Laplace smoothing: (count + 1) / (total + vocabulary_size)
-        this.wordProbs[className][word] =
-          (wordCount + 1) / (classTotalWords[className] + vocabularySize);
-      });
-    });
+    // Laplace smoothing: (word_count + 1) / (total_words + vocabulary_size)
+    return (wordCount + 1) / (totalWords + vocabularySize);
   }
 
-  // Initialize/train the Naive Bayes model
-  initializeModel() {
-    if (this.trainingData.length === 0) return;
-
-    this.buildVocabulary();
-    this.calculateClassProbabilities();
-    this.calculateWordProbabilities();
+  // Hitung P(class)
+  getClassProbability(category) {
+    const totalDocs = this.docCounts.sopan + this.docCounts.tidakSopan;
+    return this.docCounts[category] / totalDocs;
   }
 
-  // Predict using Naive Bayes
+  // Enhanced prediction dengan multiple features dan confidence
   predict(text) {
-    if (!text.trim() || this.trainingData.length === 0) {
-      return { prediction: "sopan", confidence: 0.5 };
-    }
-
     const words = this.preprocessText(text);
-    const classes = ["sopan", "tidak sopan"];
-    const scores = {};
+    const ngrams = this.generateNgrams(words, this.ngramSize);
 
-    // Calculate log probabilities for each class
-    classes.forEach((className) => {
-      // Start with log of class probability
-      scores[className] = Math.log(this.classProbs[className] || 0.5);
+    // Calculate log probabilities dengan weighted features
+    let logProbSopan = Math.log(this.getClassProbability("sopan"));
+    let logProbTidakSopan = Math.log(this.getClassProbability("tidakSopan"));
 
-      // Add log probabilities of words
-      words.forEach((word) => {
-        if (this.vocabulary.has(word)) {
-          scores[className] += Math.log(this.wordProbs[className][word]);
-        } else {
-          // Handle unknown words with very small probability
-          scores[className] += Math.log(1 / (this.vocabulary.size + 1));
-        }
-      });
-    });
+    // Weighted unigram probabilities
+    for (let word of words) {
+      const probSopan = this.getWordProbability(word, "sopan");
+      const probTidakSopan = this.getWordProbability(word, "tidakSopan");
+      const weight = this.wordWeights[word] || 1;
 
-    // Find the class with highest score
-    const predictedClass =
-      scores["sopan"] > scores["tidak sopan"] ? "sopan" : "tidak sopan";
-
-    // Calculate confidence using softmax-like approach
-    const maxScore = Math.max(...Object.values(scores));
-    const expScores = {};
-    let sumExp = 0;
-
-    for (const className in scores) {
-      expScores[className] = Math.exp(scores[className] - maxScore);
-      sumExp += expScores[className];
+      logProbSopan += Math.log(probSopan) * weight;
+      logProbTidakSopan += Math.log(probTidakSopan) * weight;
     }
 
-    const confidence = expScores[predictedClass] / sumExp;
+    // N-gram probabilities (for context)
+    for (let ngram of ngrams) {
+      const probSopan = this.getNgramProbability(ngram, "sopan");
+      const probTidakSopan = this.getNgramProbability(ngram, "tidakSopan");
+
+      // Weight n-grams less than unigrams
+      logProbSopan += Math.log(probSopan) * 0.3;
+      logProbTidakSopan += Math.log(probTidakSopan) * 0.3;
+    }
+
+    // Convert to normal probabilities and normalize
+    const probSopan = Math.exp(logProbSopan);
+    const probTidakSopan = Math.exp(logProbTidakSopan);
+    const totalProb = probSopan + probTidakSopan;
+
+    const normalizedProbSopan = probSopan / totalProb;
+    const normalizedProbTidakSopan = probTidakSopan / totalProb;
+
+    // Determine prediction and confidence
+    const prediction =
+      normalizedProbSopan > normalizedProbTidakSopan ? "sopan" : "tidak sopan";
+    const confidence = Math.max(normalizedProbSopan, normalizedProbTidakSopan);
+
+    // Store current prediction context
+    this.currentText = text;
+    this.currentPrediction = prediction;
+    this.currentConfidence = confidence;
+
+    // Auto-learning untuk high confidence predictions
+    if (confidence > this.confidenceThreshold) {
+      this.autoLearn(text, prediction);
+    }
+
+    // Track uncertain predictions
+    if (confidence < 0.6) {
+      this.stats.uncertainPredictions++;
+    }
 
     return {
-      prediction: predictedClass,
-      confidence: Math.max(0.55, Math.min(0.95, confidence)),
+      prediction: prediction,
+      confidence: Math.round(confidence * 100),
+      probabilities: {
+        sopan: Math.round(normalizedProbSopan * 100),
+        tidakSopan: Math.round(normalizedProbTidakSopan * 100),
+      },
+      features: {
+        words: words,
+        ngrams: ngrams,
+        isUncertain: confidence < 0.6,
+        isHighConfidence: confidence > this.confidenceThreshold,
+      },
     };
   }
 
-  // Add new training data and retrain model
-  addTrainingData(text, label) {
-    this.trainingData.push({
-      text: text,
-      label: label,
-      timestamp: new Date().toISOString(),
-    });
+  // N-gram probability calculation
+  getNgramProbability(ngram, category) {
+    const ngramCount = this.ngramCounts[category][ngram] || 0;
+    const totalNgrams = this.totalNgrams[category];
+    const ngramVocabSize = this.ngramVocabulary.size;
 
-    this.saveTrainingData();
-    this.initializeModel(); // Retrain model
-    this.updateStats();
+    return (ngramCount + 1) / (totalNgrams + ngramVocabSize);
   }
 
-  // Calculate model accuracy
-  calculateAccuracy() {
-    if (this.totalPredictions === 0) return 0;
-    return Math.round((this.correctPredictions / this.totalPredictions) * 100);
-  }
-
-  // Update statistics display
-  updateStats() {
-    document.getElementById("totalData").textContent = this.trainingData.length;
-    document.getElementById("accuracy").textContent =
-      this.calculateAccuracy() + "%";
-    document.getElementById("sopanCount").textContent =
-      this.trainingData.filter((item) => item.label === "sopan").length;
-    document.getElementById("tidakSopanCount").textContent =
-      this.trainingData.filter((item) => item.label === "tidak sopan").length;
-  }
-
-  // Initialize UI event listeners
-  initializeUI() {
-    document
-      .getElementById("analyzeBtn")
-      .addEventListener("click", () => this.analyzePoliteness());
-    document.getElementById("chatInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter" && e.ctrlKey) {
-        this.analyzePoliteness();
-      }
-    });
-
-    document
-      .getElementById("correctBtn")
-      .addEventListener("click", () => this.handleFeedback(true));
-    document
-      .getElementById("wrongBtn")
-      .addEventListener("click", () => this.handleFeedback(false));
-    document
-      .getElementById("correctSopan")
-      .addEventListener("click", () => this.handleCorrection("sopan"));
-    document
-      .getElementById("correctTidakSopan")
-      .addEventListener("click", () => this.handleCorrection("tidak sopan"));
-
-    document
-      .getElementById("showDataBtn")
-      .addEventListener("click", () => this.toggleDataDisplay());
-    document
-      .getElementById("clearDataBtn")
-      .addEventListener("click", () => this.clearModel());
-    document
-      .getElementById("exportDataBtn")
-      .addEventListener("click", () => this.exportData());
-  }
-
-  // Analyze politeness of input text
-  analyzePoliteness() {
-    const text = document.getElementById("chatInput").value.trim();
-    if (!text) {
-      alert("Silakan masukkan teks terlebih dahulu!");
-      return;
-    }
-
-    this.currentText = text;
-    const result = this.predict(text);
-    this.currentPrediction = result;
-    this.totalPredictions++;
-
-    this.displayResult(result);
-  }
-
-  // Display prediction results
-  displayResult(result) {
-    const resultSection = document.getElementById("resultSection");
-    const predictionResult = document.getElementById("predictionResult");
-    const confidenceScore = document.getElementById("confidenceScore");
-
-    predictionResult.textContent = result.prediction.toUpperCase();
-    predictionResult.className = `prediction ${result.prediction.replace(
-      " ",
-      "-"
-    )}`;
-
-    confidenceScore.textContent = `Tingkat Keyakinan: ${Math.round(
-      result.confidence * 100
-    )}%`;
-
-    resultSection.style.display = "block";
-    document.getElementById("correctionSection").style.display = "none";
-
-    resultSection.scrollIntoView({ behavior: "smooth" });
-  }
-
-  // Handle user feedback on prediction
-  handleFeedback(isCorrect) {
-    if (isCorrect) {
-      this.correctPredictions++;
-      this.addTrainingData(this.currentText, this.currentPrediction.prediction);
-      this.showFeedbackMessage(
-        "✅ Terima kasih! Prediksi benar dan model telah diperbarui."
+  // Auto-learning from high confidence predictions
+  autoLearn(text, prediction) {
+    // Only auto-learn if we're very confident
+    if (this.currentConfidence > 0.85) {
+      this.trainingDocs[prediction === "sopan" ? "sopan" : "tidakSopan"].push(
+        text
       );
-    } else {
-      document.getElementById("correctionSection").style.display = "block";
-    }
-    this.updateStats();
-  }
+      this.docCounts[prediction === "sopan" ? "sopan" : "tidakSopan"]++;
+      this.stats.autoLearningCount++;
 
-  // Handle user correction
-  handleCorrection(correctLabel) {
-    this.addTrainingData(this.currentText, correctLabel);
-    this.showFeedbackMessage(
-      "🔧 Terima kasih! Model telah dilatih ulang dengan data yang benar."
-    );
-    document.getElementById("correctionSection").style.display = "none";
-    this.updateStats();
-  }
-
-  // Show feedback message
-  showFeedbackMessage(message) {
-    const existingMsg = document.querySelector(".feedback-message");
-    if (existingMsg) existingMsg.remove();
-
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "feedback-message";
-    msgDiv.textContent = message;
-    msgDiv.style.cssText = `
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-          color: white;
-          padding: 15px;
-          margin: 15px 0;
-          border-radius: 10px;
-          text-align: center;
-      `;
-
-    document.getElementById("resultSection").appendChild(msgDiv);
-    setTimeout(() => msgDiv.remove(), 3000);
-  }
-
-  // Toggle training data display
-  toggleDataDisplay() {
-    const dataList = document.getElementById("trainingDataList");
-    const btn = document.getElementById("showDataBtn");
-
-    if (dataList.style.display === "none") {
-      this.displayTrainingData();
-      dataList.style.display = "block";
-      btn.textContent = "Sembunyikan Data";
-    } else {
-      dataList.style.display = "none";
-      btn.textContent = "Tampilkan Data";
+      // Re-train model periodically
+      if (this.stats.autoLearningCount % 5 === 0) {
+        this.trainModel();
+      }
     }
   }
 
-  // Display training data
-  displayTrainingData() {
-    const dataList = document.getElementById("trainingDataList");
-    dataList.innerHTML = "";
-
-    if (this.trainingData.length === 0) {
-      dataList.innerHTML = "<p>Belum ada data training</p>";
-      return;
-    }
-
-    this.trainingData.forEach((item, index) => {
-      const dataItem = document.createElement("div");
-      dataItem.className = `data-item ${item.label.replace(" ", "-")}`;
-      dataItem.innerHTML = `
-              <div class="data-text">"${item.text}"</div>
-              <div class="data-label">Label: ${item.label} ${
-        item.timestamp
-          ? `| ${new Date(item.timestamp).toLocaleString("id-ID")}`
-          : ""
-      }</div>
-          `;
-      dataList.appendChild(dataItem);
-    });
+  // Tambah training data baru
+  addTrainingData(text, label) {
+    this.trainingDocs[label].push(text);
+    this.docCounts[label]++;
+    this.trainModel(); // Re-train model
   }
 
-  // Clear model and reset data
-  clearModel() {
-    if (
-      confirm(
-        "Apakah Anda yakin ingin menghapus semua data training? Tindakan ini tidak dapat dibatalkan."
-      )
-    ) {
-      localStorage.removeItem("politenessTrainingData");
-      this.trainingData = this.loadTrainingData();
-      this.correctPredictions = 0;
-      this.totalPredictions = 0;
-      this.initializeModel();
-      this.updateStats();
-      document.getElementById("trainingDataList").style.display = "none";
-      document.getElementById("showDataBtn").textContent = "Tampilkan Data";
-      alert("Model berhasil direset!");
+  // Update feedback
+  updateFeedback(isCorrect) {
+    this.stats.totalPredictions++;
+    if (isCorrect) {
+      this.stats.correctPredictions++;
     }
   }
 
-  // Export training data
-  exportData() {
-    const dataStr = JSON.stringify(
-      {
-        trainingData: this.trainingData,
-        statistics: {
-          totalData: this.trainingData.length,
-          accuracy: this.calculateAccuracy(),
-          sopanCount: this.trainingData.filter((item) => item.label === "sopan")
-            .length,
-          tidakSopanCount: this.trainingData.filter(
-            (item) => item.label === "tidak sopan"
-          ).length,
-          exportDate: new Date().toISOString(),
-        },
-      },
-      null,
-      2
-    );
+  // Enhanced statistics dengan lebih banyak metrics
+  getStats() {
+    const accuracy =
+      this.stats.totalPredictions > 0
+        ? Math.round(
+            (this.stats.correctPredictions / this.stats.totalPredictions) * 100
+          )
+        : 0;
 
-    const dataBlob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `politeness_model_${
-      new Date().toISOString().split("T")[0]
-    }.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    return {
+      totalVocabulary: this.vocabulary.size,
+      totalNgrams: this.ngramVocabulary.size,
+      accuracy: accuracy,
+      sopanDocs: this.docCounts.sopan,
+      tidakSopanDocs: this.docCounts.tidakSopan,
+      autoLearningCount: this.stats.autoLearningCount,
+      uncertainPredictions: this.stats.uncertainPredictions,
+      confidenceThreshold: Math.round(this.confidenceThreshold * 100),
+    };
   }
 }
 
-// Initialize the application when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  new NaiveBayesPolitenessDetector();
-});
+// Initialize enhanced classifier
+const classifier = new AdvancedNaiveBayesPolitenessClassifier();
+
+// UI Functions
+function showResult(result) {
+  const predictionEl = document.getElementById("prediction");
+  const confidenceEl = document.getElementById("confidence");
+  const probabilityDetailsEl = document.getElementById("probabilityDetails");
+  const resultEl = document.getElementById("result");
+
+  // Update tampilan prediksi
+  predictionEl.textContent = result.prediction.toUpperCase();
+  predictionEl.className = `prediction ${result.prediction.replace(" ", "-")}`;
+
+  // Update confidence
+  confidenceEl.textContent = `Keyakinan: ${result.confidence}%`;
+
+  // Update probability details dengan info lebih lengkap
+  probabilityDetailsEl.innerHTML = `
+      <strong>🧠 Advanced Naive Bayes Analysis:</strong><br>
+      • P(Sopan) = ${result.probabilities.sopan}%<br>
+      • P(Tidak Sopan) = ${result.probabilities.tidakSopan}%<br>
+      • <strong>Features:</strong> ${result.features.words.join(", ")}<br>
+      • <strong>N-grams:</strong> ${result.features.ngrams
+        .slice(0, 3)
+        .join(", ")}${result.features.ngrams.length > 3 ? "..." : ""}<br>
+      • <strong>Status:</strong> ${
+        result.features.isHighConfidence
+          ? "🟢 High Confidence"
+          : result.features.isUncertain
+          ? "🟡 Uncertain"
+          : "🔵 Normal"
+      }<br>
+      ${
+        result.features.isHighConfidence
+          ? "<em>⚡ Auto-learning enabled</em>"
+          : ""
+      }
+  `;
+
+  // Tampilkan section hasil
+  resultEl.style.display = "block";
+
+  // Update statistik
+  updateStats();
+
+  // Scroll ke hasil
+  resultEl.scrollIntoView({ behavior: "smooth" });
+}
+
+function updateStats() {
+  const stats = classifier.getStats();
+  document.getElementById("totalVocab").textContent = stats.totalVocabulary;
+  document.getElementById("accuracy").textContent = stats.accuracy + "%";
+  document.getElementById("sopanDocs").textContent = stats.sopanDocs;
+  document.getElementById("tidakSopanDocs").textContent = stats.tidakSopanDocs;
+}
+
+function showMessage(text) {
+  const messageEl = document.getElementById("message");
+  messageEl.textContent = text;
+  messageEl.style.display = "block";
+
+  setTimeout(() => {
+    messageEl.style.display = "none";
+  }, 3000);
+}
+
+// Event handlers
+function handleAnalyze() {
+  const text = document.getElementById("textInput").value.trim();
+
+  if (!text) {
+    alert("Silakan masukkan teks terlebih dahulu!");
+    return;
+  }
+
+  classifier.currentText = text;
+  const result = classifier.predict(text);
+  classifier.currentPrediction = result.prediction;
+
+  showResult(result);
+}
+
+function handleCorrectFeedback() {
+  classifier.updateFeedback(true);
+  classifier.addTrainingData(
+    classifier.currentText,
+    classifier.currentPrediction
+  );
+  const stats = classifier.getStats();
+  showMessage(
+    `✅ Model updated! Auto-learning: ${stats.autoLearningCount} cases`
+  );
+  updateStats();
+}
+
+function handleWrongFeedback() {
+  classifier.updateFeedback(false);
+  const correctLabel =
+    classifier.currentPrediction === "sopan" ? "tidakSopan" : "sopan";
+  classifier.addTrainingData(classifier.currentText, correctLabel);
+  const stats = classifier.getStats();
+  showMessage(
+    `🔧 Model corrected! Uncertain cases: ${stats.uncertainPredictions}`
+  );
+  updateStats();
+}
+
+// Initialize app
+function initializeApp() {
+  document
+    .getElementById("analyzeBtn")
+    .addEventListener("click", handleAnalyze);
+  document
+    .getElementById("correctBtn")
+    .addEventListener("click", handleCorrectFeedback);
+  document
+    .getElementById("wrongBtn")
+    .addEventListener("click", handleWrongFeedback);
+
+  document.getElementById("textInput").addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && e.ctrlKey) {
+      handleAnalyze();
+    }
+  });
+
+  updateStats();
+}
+
+// Start app when DOM loaded
+document.addEventListener("DOMContentLoaded", initializeApp);

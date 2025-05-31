@@ -3,90 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Deteksi Kesopanan Chat</title>
+    <title>AI Deteksi Kesopanan Chat - Naive Bayes</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <header>
-        <h1>🤖 AI Deteksi Kesopanan Chat</h1>
-        <p>Sistem AI dengan Naive Bayes yang belajar dari feedback Anda</p>
-      </header>
-
-      <div class="main-content">
+      <div class="header">
+        <h1>🤖 AI Deteksi Kesopanan (Naive Bayes)</h1>
+        <p>Sistem machine learning untuk menganalisis kesopanan teks</p>
+      </div>
+      <div class="content">
         <!-- Input Section -->
         <div class="input-section">
-          <h2>📝 Masukkan Kalimat Chat</h2>
+          <h2>📝 Masukkan Teks</h2>
           <textarea
-            id="chatInput"
+            id="textInput"
             placeholder="Ketik kalimat yang ingin dianalisis..."
           ></textarea>
-          <button id="analyzeBtn">Analisis Kesopanan</button>
+          <button id="analyzeBtn">Analisis dengan Naive Bayes</button>
         </div>
-
         <!-- Result Section -->
-        <div class="result-section" id="resultSection" style="display: none">
-          <h3>🔍 Hasil Analisis</h3>
-          <div class="prediction" id="predictionResult"></div>
-          <div class="confidence" id="confidenceScore"></div>
+        <div class="result" id="result">
+          <div class="prediction" id="prediction"></div>
+          <div class="confidence" id="confidence"></div>
+          <div class="probability-details" id="probabilityDetails"></div>
 
-          <div class="feedback-section">
-            <h4>✋ Apakah prediksi ini benar?</h4>
+          <div class="feedback">
+            <h4>Apakah hasil ini benar?</h4>
             <div class="feedback-buttons">
-              <button id="correctBtn" class="feedback-btn correct">
+              <button class="feedback-btn correct" id="correctBtn">
                 ✅ Benar
               </button>
-              <button id="wrongBtn" class="feedback-btn wrong">❌ Salah</button>
-            </div>
-          </div>
-
-          <div
-            class="correction-section"
-            id="correctionSection"
-            style="display: none"
-          >
-            <h4>🔧 Koreksi yang Benar:</h4>
-            <div class="correction-buttons">
-              <button id="correctSopan" class="correction-btn">Sopan</button>
-              <button id="correctTidakSopan" class="correction-btn">
-                Tidak Sopan
-              </button>
+              <button class="feedback-btn wrong" id="wrongBtn">❌ Salah</button>
             </div>
           </div>
         </div>
-
-        <!-- Stats Section -->
-        <div class="stats-section">
-          <h3>📊 Statistik Model</h3>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-number" id="totalData">0</div>
-              <div class="stat-label">Total Data</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="accuracy">0%</div>
-              <div class="stat-label">Akurasi</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="sopanCount">0</div>
-              <div class="stat-label">Data Sopan</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="tidakSopanCount">0</div>
-              <div class="stat-label">Data Tidak Sopan</div>
-            </div>
+        <!-- Message -->
+        <div class="message" id="message"></div>
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalVocab">0</div>
+            <div class="stat-label">Total Vocabulary</div>
           </div>
-        </div>
-
-        <!-- Training Data Section -->
-        <div class="training-data-section">
-          <h3>🎓 Data Training</h3>
-          <div class="data-controls">
-            <button id="showDataBtn">Tampilkan Data</button>
-            <button id="clearDataBtn">Reset Model</button>
-            <button id="exportDataBtn">Export Data</button>
+          <div class="stat-card">
+            <div class="stat-number" id="accuracy">0%</div>
+            <div class="stat-label">Akurasi</div>
           </div>
-          <div id="trainingDataList" style="display: none"></div>
+          <div class="stat-card">
+            <div class="stat-number" id="sopanDocs">0</div>
+            <div class="stat-label">Dokumen Sopan</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="tidakSopanDocs">0</div>
+            <div class="stat-label">Dokumen Tidak Sopan</div>
+          </div>
         </div>
       </div>
     </div>
