@@ -1,11 +1,10 @@
-/* Reset CSS */
+/* Reset & Basic Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body dan Layout Utama */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -17,7 +16,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   background: white;
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
@@ -45,23 +44,23 @@ body {
   padding: 30px;
 }
 
-/* Input Section */
-.input-section {
-  margin-bottom: 30px;
+.section {
+  margin-bottom: 25px;
 }
 
-.input-section h2 {
+.section h2 {
   color: #333;
   margin-bottom: 15px;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
 }
 
+/* Input Area */
 #textInput {
   width: 100%;
   height: 100px;
   padding: 15px;
   border: 2px solid #ddd;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 16px;
   resize: vertical;
   margin-bottom: 15px;
@@ -74,49 +73,27 @@ body {
   box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
 }
 
-#analyzeBtn {
+.btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 12px 25px;
-  border-radius: 25px;
+  border-radius: 20px;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-#analyzeBtn:hover {
+.btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
-/* Explanation Section */
-.explanation {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 15px;
-  margin-bottom: 30px;
-  border-left: 5px solid #4facfe;
-}
-
-.explanation h3 {
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.step {
-  margin: 10px 0;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  border-left: 3px solid #667eea;
-}
-
-/* Result Section */
+/* Results */
 .result {
   background: #f8f9fa;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 10px;
   margin-bottom: 20px;
   display: none;
   border-left: 5px solid #4facfe;
@@ -126,10 +103,9 @@ body {
   font-size: 1.5rem;
   font-weight: bold;
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-align: center;
   margin-bottom: 15px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .sopan {
@@ -150,18 +126,10 @@ body {
   font-weight: 500;
 }
 
-.calculation-details {
-  background: #e9ecef;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  font-family: "Courier New", monospace;
-}
-
 /* Feedback */
 .feedback {
   text-align: center;
+  margin-top: 20px;
 }
 
 .feedback h4 {
@@ -174,19 +142,16 @@ body {
   display: flex;
   gap: 15px;
   justify-content: center;
+  margin-top: 15px;
 }
 
 .feedback-btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 20px;
+  border-radius: 15px;
   cursor: pointer;
-  font-size: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.feedback-btn:hover {
-  transform: translateY(-2px);
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .correct {
@@ -194,24 +159,21 @@ body {
   color: white;
 }
 
-.correct:hover {
-  box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
-}
-
 .wrong {
   background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
   color: white;
 }
 
-.wrong:hover {
-  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+.feedback-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Message */
 .message {
   padding: 15px;
   margin: 15px 0;
-  border-radius: 10px;
+  border-radius: 8px;
   text-align: center;
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   color: white;
@@ -236,13 +198,13 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .stat-card {
   background: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -254,7 +216,7 @@ body {
 }
 
 .stat-number {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: #667eea;
   margin-bottom: 5px;
@@ -270,7 +232,7 @@ body {
 @media (max-width: 768px) {
   .container {
     margin: 10px;
-    border-radius: 15px;
+    border-radius: 10px;
   }
 
   .header {
