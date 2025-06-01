@@ -121,19 +121,10 @@ function updateStats() {
   document.getElementById("accuracy").textContent = accuracy + "%";
 }
 
-// Event listener untuk keyboard shortcut
+// Inisialisasi aplikasi ketika halaman dimuat
 document.addEventListener("DOMContentLoaded", function () {
-  const textInput = document.getElementById("textInput");
-
-  textInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter" && e.ctrlKey) {
-      analyze();
-    }
-  });
-
   // Inisialisasi statistik
   updateStats();
 
   console.log("🎉 AI Deteksi Kesopanan siap digunakan!");
-  console.log("💡 Tips: Tekan Ctrl+Enter untuk analisis cepat");
 });
