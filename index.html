@@ -8,57 +8,34 @@
   </head>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>🤖 AI Deteksi Kesopanan</h1>
-        <p>Menggunakan Metode Learning dengan algoritma Naive Bayes</p>
+      <h1>🤖 AI Deteksi Kesopanan</h1>
+
+      <textarea
+        id="textInput"
+        placeholder="Ketik kalimat yang ingin dianalisis..."
+      ></textarea>
+      <button class="btn" onclick="analyze()">Analisis</button>
+
+      <div id="result" class="result">
+        <div id="prediction"></div>
+        <div class="feedback">
+          <button class="correct" onclick="feedback(true)">✅ Benar</button>
+          <button class="wrong" onclick="feedback(false)">❌ Salah</button>
+        </div>
       </div>
 
-      <div class="content">
-        <!-- Input Section -->
-        <div class="section">
-          <h2>📝 Masukkan Teks</h2>
-          <textarea
-            id="textInput"
-            placeholder="Ketik kalimat yang ingin dianalisis..."
-          ></textarea>
-          <button class="btn" onclick="analyzeText()">Analisis Teks</button>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-number" id="total">0</div>
+          <div>Total</div>
         </div>
-
-        <!-- Result Section -->
-        <div class="result" id="result">
-          <div class="prediction" id="prediction"></div>
-          <div class="confidence" id="confidence"></div>
-
-          <div class="feedback">
-            <h4>Apakah hasil ini benar?</h4>
-            <div class="feedback-buttons">
-              <button class="feedback-btn correct" onclick="giveFeedback(true)">
-                ✅ Benar
-              </button>
-              <button class="feedback-btn wrong" onclick="giveFeedback(false)">
-                ❌ Salah
-              </button>
-            </div>
-          </div>
+        <div class="stat">
+          <div class="stat-number" id="correct">0</div>
+          <div>Benar</div>
         </div>
-
-        <!-- Message -->
-        <div class="message" id="message"></div>
-
-        <!-- Statistics -->
-        <div class="stats">
-          <div class="stat-card">
-            <div class="stat-number" id="totalPredictions">0</div>
-            <div class="stat-label">Total Prediksi</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number" id="correctCount">0</div>
-            <div class="stat-label">Prediksi Benar</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number" id="accuracy">0%</div>
-            <div class="stat-label">Akurasi</div>
-          </div>
+        <div class="stat">
+          <div class="stat-number" id="accuracy">0%</div>
+          <div>Akurasi</div>
         </div>
       </div>
     </div>
